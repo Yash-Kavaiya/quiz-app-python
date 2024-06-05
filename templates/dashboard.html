@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="bg-white p-8 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold mb-6 text-center">Leaderboard</h2>
+
+    <!-- Leaderboard Table -->
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white">
+            <thead>
+                <tr>
+                    <th class="py-2 px-4 bg-gray-200 text-gray-600 font-bold uppercase text-sm text-left">Rank</th>
+                    <th class="py-2 px-4 bg-gray-200 text-gray-600 font-bold uppercase text-sm text-left">User</th>
+                    <th class="py-2 px-4 bg-gray-200 text-gray-600 font-bold uppercase text-sm text-left">Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rank, user in leaderboard %}
+                <tr>
+                    <td class="py-2 px-4 border-b border-gray-200">{{ rank }}</td>
+                    <td class="py-2 px-4 border-b border-gray-200">{{ user.name }}</td>
+                    <td class="py-2 px-4 border-b border-gray-200">{{ user.score }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="mt-12">
+        <h3 class="text-xl font-bold mb-4 text-center">Performance Charts</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Bar Chart -->
+            <div>
+                <h4 class="text-lg font-bold mb-2 text-center">Scores Distribution</h4>
+                <canvas id="barChart" width="400" height="400"></canvas>
+            </div>
+            <!-- Pie Chart -->
+            <div>
+                <h4 class="text-lg font-bold mb-2 text-center">Top Performers</h4>
+                <canvas id="pieChart" width="400" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Bar Chart
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    const barChart = new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ leaderboard|map(attribute='name')|list if leaderboard else [] }},
+            datasets: [{
+                label: 'Scores',
+                data: {{ leaderboard|map(attribute='score')|list if leaderboard else [] }},
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Pie Chart
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+    const pieChart = new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: {{ leaderboard|slice(0, 5)|map(attribute='name')|list if leaderboard else [] }},
+            datasets: [{
+                label: 'Top Performers',
+                data: {{ leaderboard|slice(0, 5)|map(attribute='score')|list if leaderboard else [] }},
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+        }
+    });
+</script>
+{% endblock %}

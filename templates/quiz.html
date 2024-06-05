@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz{% endblock %}
+
+{% block content %}
+<div class="bg-white p-8 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold mb-6 text-center">Welcome to the Quiz Page</h2>
+
+    <!-- Timer -->
+    <div class="text-center mb-6">
+        <span id="timer" class="text-2xl font-bold">Time Left: 20:00</span>
+    </div>
+
+    <!-- Quiz Questions -->
+    <form id="quiz-form">
+        {% for i in range(1, 21) %}
+        <div class="mb-6">
+            <h3 class="text-xl font-bold mb-2">Question {{ i }}</h3>
+            <p class="mb-2">This is the question text for question {{ i }}.</p>
+            <div class="space-y-2">
+                <label class="block">
+                    <input type="radio" name="question{{ i }}" value="option1" class="mr-2"> Option 1
+                </label>
+                <label class="block">
+                    <input type="radio" name="question{{ i }}" value="option2" class="mr-2"> Option 2
+                </label>
+                <label class="block">
+                    <input type="radio" name="question{{ i }}" value="option3" class="mr-2"> Option 3
+                </label>
+                <label class="block">
+                    <input type="radio" name="question{{ i }}" value="option4" class="mr-2"> Option 4
+                </label>
+            </div>
+            <div class="mt-2">
+                <button type="button" class="bg-yellow-500 text-white py-1 px-3 rounded-md" onclick="markForReview({{ i }})">Mark for Review</button>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="text-center">
+            <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded-md">Submit Quiz</button>
+        </div>
+    </form>
+
+    <!-- Graph Section -->
+    <div class="mt-12">
+        <h3 class="text-xl font-bold mb-4 text-center">Quiz Summary</h3>
+        <div class="flex justify-center">
+            <canvas id="quizSummaryChart" width="400" height="400"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Timer functionality
+    let timeLeft = 1200; // 20 minutes in seconds
+    const timerElement = document.getElementById('timer');
+    const timerInterval = setInterval(() => {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerElement.textContent = `Time Left: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        timeLeft--;
+        if (timeLeft < 0) {
+            clearInterval(timerInterval);
+            alert('Time is up!');
+            document.getElementById('quiz-form').submit();
+        }
+    }, 1000);
+
+    // Mark for review functionality
+    function markForReview(questionNumber) {
+        alert(`Question ${questionNumber} marked for review.`);
+    }
+
+    // Quiz summary chart
+    const ctx = document.getElementById('quizSummaryChart').getContext('2d');
+    const quizSummaryChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Attempted', 'Not Attempted', 'Marked for Review'],
+            datasets: [{
+                label: 'Quiz Summary',
+                data: [10, 5, 5], // Example data
+                backgroundColor: ['#4CAF50', '#F44336', '#FFEB3B'],
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+        }
+    });
+</script>
+{% endblock %}

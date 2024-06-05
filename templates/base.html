@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-indigo-600 p-4">
+        <div class="container mx-auto">
+            <a href="{{ url_for('home') }}" class="text-white">Home</a>
+            <a href="{{ url_for('dashboard') }}" class="text-white ml-4">Dashboard</a>
+            <a href="{{ url_for('quiz') }}" class="text-white ml-4">Quiz</a>
+            <a href="{{ url_for('talati') }}" class="text-white ml-4">Talati</a>
+            <a href="{{ url_for('learn') }}" class="text-white ml-4">Learn</a>
+            <a href="{{ url_for('logout') }}" class="text-white ml-4">Logout</a>
+        </div>
+    </nav>
+    <div class="container mx-auto mt-8">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
